@@ -1,6 +1,8 @@
 # from debian
 FROM debian:buster-slim
 
+RUN apt install -y protobuf-compiler libprotobuf-dev
+
 # install rust
 RUN apt-get update && apt-get install -y curl
 RUN apt-get install -y build-essential libssl-dev pkg-config

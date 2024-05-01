@@ -1,9 +1,7 @@
-use crate::guard::auth_guard::{AuthGuard, Role};
-use crate::library::error_response::error_response;
+use crate::guard::auth_guard::AuthGuard;
 use crate::model::supermarket::{CreateSupermarketDto, UpdateSupermarketDto};
 use crate::service::supermarket::SupermarketService;
 use crate::{library::heymart_result::Result, model::supermarket::Supermarket};
-use rocket::http::Status;
 use rocket::{get, post, put, State};
 use rocket::{response::status::Created, serde::json::Json};
 use sqlx::PgPool;
@@ -26,16 +24,10 @@ pub async fn find_by_id(db_pool: &State<PgPool>, id: i64) -> Result<Json<Superma
 
 #[post("/", format = "json", data = "<supermarket>")]
 pub async fn create(
-    auth_ctx: AuthGuard,
+    _auth_ctx: AuthGuard,
     db_pool: &State<PgPool>,
     supermarket: Json<CreateSupermarketDto>,
 ) -> Result<Created<Json<Supermarket>>> {
-    if auth_ctx.user.role != Role::ADMIN {
-        return Err(error_response(
-            Status::Forbidden,
-            String::from("You are not authorized to perform this action."),
-        ));
-    }
     return match SupermarketService::create(db_pool.inner().clone(), supermarket.into_inner()).await
     {
         Ok(supermarket) => Ok(Created::new("/").body(Json(supermarket))),
@@ -45,17 +37,11 @@ pub async fn create(
 
 #[put("/<id>", format = "json", data = "<supermarket>")]
 pub async fn update(
-    auth_ctx: AuthGuard,
+    _auth_ctx: AuthGuard,
     db_pool: &State<PgPool>,
     id: i64,
     supermarket: Json<UpdateSupermarketDto>,
 ) -> Result<Json<Supermarket>> {
-    if auth_ctx.user.role != Role::ADMIN {
-        return Err(error_response(
-            Status::Forbidden,
-            String::from("You are not authorized to perform this action."),
-        ));
-    }
     return match SupermarketService::update(db_pool.inner().clone(), id, supermarket.into_inner())
         .await
     {
@@ -65,13 +51,7 @@ pub async fn update(
 }
 
 #[delete("/<id>")]
-pub async fn delete(auth_ctx: AuthGuard, db_pool: &State<PgPool>, id: i64) -> Result<()> {
-    if auth_ctx.user.role != Role::ADMIN {
-        return Err(error_response(
-            Status::Forbidden,
-            String::from("You are not authorized to perform this action."),
-        ));
-    }
+pub async fn delete(_auth_ctx: AuthGuard, db_pool: &State<PgPool>, id: i64) -> Result<()> {
     return match SupermarketService::delete(db_pool.inner().clone(), id).await {
         Ok(_) => Ok(()),
         Err(e) => Err(e),

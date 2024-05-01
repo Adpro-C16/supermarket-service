@@ -5,6 +5,9 @@ use std::env;
 #[macro_use]
 extern crate rocket;
 pub mod controller;
+pub mod services {
+    tonic::include_proto!("services");
+}
 
 pub mod guard;
 pub mod library;
