@@ -7,10 +7,10 @@ use rocket::serde::Serialize;
 #[serde(crate = "rocket::serde")]
 pub struct ErrorResponse {
     pub status_code: Status,
-    pub message: String,
+    pub message: &'static str,
 }
 
-pub fn error_response(status_code: Status, message: String) -> Custom<Json<ErrorResponse>> {
+pub fn error_response(status_code: Status, message: &'static str) -> Custom<Json<ErrorResponse>> {
     return Custom(
         status_code,
         Json::from(ErrorResponse {

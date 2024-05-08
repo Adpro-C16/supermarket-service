@@ -1,11 +1,13 @@
 #[cfg(test)]
 mod tests {
+    use rocket::tokio;
+
     use crate::{
         model::supermarket::{CreateSupermarketDto, UpdateSupermarketDto},
         repository::{lib::setup, supermarket::SupermarketRepository},
     };
 
-    #[sqlx::test]
+    #[tokio::test]
     async fn test_create_supermarket() {
         let pool = &setup().await;
         let mut conn = pool.acquire().await.unwrap();
@@ -43,7 +45,7 @@ mod tests {
         assert_eq!(result.manager_id, 1);
     }
 
-    #[sqlx::test]
+    #[tokio::test]
     async fn test_get_all_supermarkets() {
         let pool = &setup().await;
         let mut conn = pool.acquire().await.unwrap();
@@ -82,7 +84,7 @@ mod tests {
         assert_eq!(supermarkets[1].name, "Supermarket 2");
     }
 
-    #[sqlx::test]
+    #[tokio::test]
     async fn test_get_supermarket_by_id() {
         let pool = &setup().await;
         let mut conn = pool.acquire().await.unwrap();
@@ -112,7 +114,7 @@ mod tests {
         assert_eq!(supermarket.name, "Supermarket 1");
     }
 
-    #[sqlx::test]
+    #[tokio::test]
     async fn test_update_supermarket() {
         let pool = &setup().await;
         let mut conn = pool.acquire().await.unwrap();
@@ -160,7 +162,7 @@ mod tests {
         assert_eq!(result.manager_id, 2);
     }
 
-    #[sqlx::test]
+    #[tokio::test]
     async fn test_update_supermarket_name() {
         let pool = &setup().await;
         let mut conn = pool.acquire().await.unwrap();
@@ -196,10 +198,9 @@ mod tests {
         .await
         .unwrap();
         assert_eq!(supermarket.name, "Supermarket 2");
-
     }
 
-    #[sqlx::test]
+    #[tokio::test]
     async fn test_update_supermarket_balance() {
         let pool = &setup().await;
         let mut conn = pool.acquire().await.unwrap();
@@ -237,7 +238,7 @@ mod tests {
         assert_eq!(supermarket.balance, 1000);
     }
 
-    #[sqlx::test]
+    #[tokio::test]
     async fn test_delete_supermarket() {
         let pool = &setup().await;
         let mut conn = pool.acquire().await.unwrap();

@@ -156,9 +156,18 @@ mod tests {
         .await
         .unwrap();
 
+        let sup = sqlx::query!(
+            r#"
+            SELECT id FROM supermarket WHERE name = 'Supermarket 1';
+            "#,
+        )
+        .fetch_one(&mut *conn)
+        .await
+        .unwrap();
+
         let supermarket = SupermarketService::update(
             pool.clone(),
-            1,
+            sup.id,
             UpdateSupermarketDto {
                 name: Some("Supermarket 2".to_string()),
                 balance: Some(1000),
@@ -234,8 +243,18 @@ mod tests {
         .execute(&mut *conn)
         .await
         .unwrap();
+        let sup = sqlx::query!(
+            r#"
+            SELECT id FROM supermarket WHERE name = 'Supermarket 1';
+            "#,
+        )
+        .fetch_one(&mut *conn)
+        .await
+        .unwrap();
 
-        let supermarket = SupermarketService::delete(pool.clone(), 1).await.unwrap();
+        let supermarket = SupermarketService::delete(pool.clone(), sup.id)
+            .await
+            .unwrap();
         assert_eq!(supermarket.name, "Supermarket 1");
     }
 }
