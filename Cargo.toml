@@ -20,9 +20,15 @@ dotenvy = "0.15.7"
 rust-test = "0.1.0"
 rocket_cors = "0.6.0"
 reqwest = { version = "0.12", features = ["json"] }
-tonic = "0.7"
+tonic = { version = "^0.7", features = [
+    "transport",
+    "tls",
+    "tls-roots",
+    "tls-webpki-roots",
+] }
 prost = "0.10"
 tokio-stream = "0.1"
+sqlx-db-tester = "0.4.2"
 
 [build-dependencies]
 tonic-build = "0.7"

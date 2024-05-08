@@ -10,13 +10,25 @@ pub mod services {
     tonic::include_proto!("services");
 }
 
-use services::{auth_service_client::AuthServiceClient, VerifyRequest};
+use services::{auth_service_client::AuthServiceClient, ClaimsRequest};
 
 use crate::library::error_response::ErrorResponse;
 
+#[derive(Debug, PartialEq)]
+pub enum Role {
+    Admin,
+    User,
+}
+
+#[derive(Debug)]
+pub struct Claims {
+    pub user_id: i32,
+    pub role: Role,
+}
+
 #[derive(Debug)]
 pub struct AuthGuard {
-    pub success: bool,
+    pub claims: Claims,
 }
 
 #[rocket::async_trait]
@@ -30,27 +42,26 @@ impl<'r> FromRequest<'r> for AuthGuard {
                 Status::Unauthorized,
                 ErrorResponse {
                     status_code: rocket::http::Status::Unauthorized,
-                    message: "Unauthorized".to_string(),
+                    message: "Unauthorized",
                 },
             ));
         }
         let token = auth_header.unwrap().split_whitespace().last().unwrap();
         let auth_url = env::var("AUTH_SERVICE_URL").expect("AUTH_SERVICE_URL must be set.");
         let mut client = AuthServiceClient::connect(auth_url).await.unwrap();
-        let request = tonic::Request::new(VerifyRequest {
+        let request = tonic::Request::new(ClaimsRequest {
             token: token.to_string(),
         });
-        let response = client.verify(request).await.unwrap().into_inner();
-        if response.is_valid == false {
-            return Outcome::Error((
-                Status::Unauthorized,
-                ErrorResponse {
-                    status_code: rocket::http::Status::Unauthorized,
-                    message: "Unauthorized".to_string(),
-                },
-            ));
-        }
+        let response = client.get_claims(request).await.unwrap().into_inner();
+        let claims = Claims {
+            user_id: response.user_id,
+            role: match response.role.as_str() {
+                "ADMIN" => Role::Admin,
+                "USER" => Role::User,
+                _ => Role::User,
+            },
+        };
 
-        Outcome::Success(AuthGuard { success: true })
+        Outcome::Success(AuthGuard { claims })
     }
 }

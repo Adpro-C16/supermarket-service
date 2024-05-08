@@ -13,7 +13,7 @@ impl SupermarketService {
             Some(supermarkets) => Ok(supermarkets),
             None => Err(error_response(
                 Status::InternalServerError,
-                "Failed to get all supermarkets".to_string(),
+                "Failed to get all supermarkets",
             )),
         }
     }
@@ -21,25 +21,19 @@ impl SupermarketService {
     pub async fn find_by_id(db_pool: PgPool, id: i64) -> Result<Supermarket> {
         match SupermarketRepository::find_by_id(db_pool, id).await {
             Some(supermarket) => Ok(supermarket),
-            None => Err(error_response(
-                Status::NotFound,
-                "Supermarket not found".to_string(),
-            )),
+            None => Err(error_response(Status::NotFound, "Supermarket not found")),
         }
     }
 
     pub async fn create(db_pool: PgPool, supermarket: CreateSupermarketDto) -> Result<Supermarket> {
         if supermarket.name.is_empty() {
-            return Err(error_response(
-                Status::BadRequest,
-                "Name cannot be empty".to_string(),
-            ));
+            return Err(error_response(Status::BadRequest, "Name cannot be empty"));
         }
 
         if supermarket.manager_id < 1 {
             return Err(error_response(
                 Status::BadRequest,
-                "Manager ID must be greater than 0".to_string(),
+                "Manager ID must be greater than 0",
             ));
         }
 
@@ -47,7 +41,7 @@ impl SupermarketService {
             Some(supermarket) => Ok(supermarket),
             None => Err(error_response(
                 Status::InternalServerError,
-                "Failed to create supermarket".to_string(),
+                "Failed to create supermarket",
             )),
         }
     }
@@ -60,10 +54,7 @@ impl SupermarketService {
         match supermarket.name {
             Some(ref name) => {
                 if name.is_empty() {
-                    return Err(error_response(
-                        Status::BadRequest,
-                        "Name cannot be empty".to_string(),
-                    ));
+                    return Err(error_response(Status::BadRequest, "Name cannot be empty"));
                 }
             }
             None => {}
@@ -74,7 +65,7 @@ impl SupermarketService {
                 if balance < 0 {
                     return Err(error_response(
                         Status::BadRequest,
-                        "Balance cannot be negative".to_string(),
+                        "Balance cannot be negative",
                     ));
                 }
             }
@@ -86,14 +77,11 @@ impl SupermarketService {
                 Some(supermarket) => Ok(supermarket),
                 None => Err(error_response(
                     Status::InternalServerError,
-                    "Failed to update supermarket".to_string(),
+                    "Failed to update supermarket",
                 )),
             },
             None => {
-                return Err(error_response(
-                    Status::NotFound,
-                    "Supermarket not found".to_string(),
-                ));
+                return Err(error_response(Status::NotFound, "Supermarket not found"));
             }
         }
     }
@@ -104,13 +92,10 @@ impl SupermarketService {
                 Some(_) => Ok(supermarket),
                 None => Err(error_response(
                     Status::InternalServerError,
-                    "Failed to delete supermarket".to_string(),
+                    "Failed to delete supermarket",
                 )),
             },
-            None => Err(error_response(
-                Status::NotFound,
-                "Supermarket not found".to_string(),
-            )),
+            None => Err(error_response(Status::NotFound, "Supermarket not found")),
         }
     }
 }
