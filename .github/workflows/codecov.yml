@@ -41,6 +41,7 @@ jobs:
 
       - name: Generate coverage
         env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
           LLVM_PROFILE_FILE: "raw-parts-%m-%p.profraw"
           RUSTFLAGS: "-C instrument-coverage"
           # Unstable feature: https://github.com/rust-lang/rust/issues/56925
