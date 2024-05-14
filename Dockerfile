@@ -20,7 +20,7 @@ RUN cargo build --release
 FROM gcr.io/distroless/cc-debian11 AS runner
 # # set the working directory in the runner stage
 # WORKDIR /app
-COPY --from=builder ./target/release/management /management
+COPY --from=builder /target/release/management /management
 
 ENV ROCKET_ADDRESS=0.0.0.0
 ENV ROCKET_PORT=8080
