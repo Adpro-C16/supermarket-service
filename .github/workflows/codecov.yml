@@ -1,72 +1,31 @@
-name: Code Coverage
+name: Codecov
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 0 * * 6"
+    - cron: "0 0 * * *"
 
 env:
   CARGO_TERM_COLOR: always
 
 jobs:
   coverage:
-    name: Coverage
     runs-on: ubuntu-latest
+    env:
+      CARGO_TERM_COLOR: always
     steps:
       - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-
-      - name: Install Protobuf
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y protobuf-compiler libprotobuf-dev
-
-      - name: Install Rust toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: nightly
-          profile: minimal
-          override: true
-          components: llvm-tools-preview
-
-      - name: Setup grcov
-        run: |
-          release_url="$(curl \
-            -H "Accept: application/vnd.github.v3+json" \
-            https://api.github.com/repos/mozilla/grcov/releases | \
-            jq -r '.[0].assets | map(select(.browser_download_url | test(".*x86_64-unknown-linux-musl.tar.bz2$"))) | .[0].browser_download_url')"
-
-          curl -sL "$release_url" | sudo tar xvj -C /usr/local/bin/
-
-      - name: Generate coverage
+      - name: Install Rust
+        run: rustup update stable
+      - name: Install cargo-llvm-cov
+        uses: taiki-e/install-action@cargo-llvm-cov
+      - name: Generate code coverage
+        run: cargo llvm-cov --all-features --workspace --lcov --output-path lcov.info
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          LLVM_PROFILE_FILE: "raw-parts-%m-%p.profraw"
-          RUSTFLAGS: "-C instrument-coverage"
-          # Unstable feature: https://github.com/rust-lang/rust/issues/56925
-          RUSTDOCFLAGS: "-C instrument-coverage -Z unstable-options --persist-doctests target/debug/doctests"
-        run: cargo test
-
-      - name: Generate HTML report
-        run: grcov raw-parts*.profraw --source-dir . --keep-only 'src/**/*.rs' --binary-path target/debug -t html --filter covered -o target/coverage
-
-      - name: Generate detailed JSON report
-        run: grcov raw-parts*.profraw --source-dir . --keep-only 'src/**/*.rs' --binary-path target/debug -t covdir --filter covered -o target/coverage/coverage.json
-
-      - name: SonarCloud upload
-        uses: SonarSource/sonarcloud-github-action@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
         with:
-          args: >
-            -Dsonar.community.rust.lcov.reportPaths=target/coverage/coverage.json
-  # -Dsonar.coverage.jacoco.xmlReportPaths=
-
-      - name: Codecov install and run
-        run: |
-          curl -Os https://uploader.codecov.io/latest/linux/codecov
-          chmod +x codecov
-          ./codecov
+          token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
+          files: lcov.info
+          fail_ci_if_error: true
