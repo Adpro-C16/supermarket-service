@@ -1,4 +1,4 @@
-name: cto-game coverage
+name: Code Coverage
 
 on:
   workflow_dispatch:
@@ -17,6 +17,11 @@ jobs:
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
 
+      - name: Install Protobuf
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y protobuf-compiler libprotobuf-dev
+
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
         with:
@@ -24,11 +29,6 @@ jobs:
           profile: minimal
           override: true
           components: llvm-tools-preview
-
-      - name: Install Protobuf
-        run: |
-          apt-get update
-          apt-get install -y protobuf-compiler libprotobuf-dev
 
       - name: Setup grcov
         run: |
