@@ -33,3 +33,4 @@ tonic-build = "0.7"
 
 [profile.release]
 debug = 1
+

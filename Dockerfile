@@ -15,18 +15,11 @@ WORKDIR /app
 # copy project files
 COPY . .
 
-RUN cargo build --release 
-RUN ls -la
-
-FROM gcr.io/distroless/cc-debian11 AS runner
-# # set the working directory in the runner stage
-# WORKDIR /app
-COPY --from=builder /target/release/management /management
+RUN cargo build --release
 
 ENV ROCKET_ADDRESS=0.0.0.0
 ENV ROCKET_PORT=8080
 
-# WORKDIR /app
 EXPOSE 8080
 
-CMD ["/management"]
+CMD ["./target/release/management"]
