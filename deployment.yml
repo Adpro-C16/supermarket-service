@@ -21,7 +21,7 @@ spec:
         app: supermarket
     spec:
       containers:
-        - image: docker.io/springcommunity/supermarket:3.2.0
+        - image: gcr.io/heymart-k8s/heymart-supermarket:87f6b4f64bc9fe18c4c1ea1ef543bd93d08196e3
           imagePullPolicy: IfNotPresent
           name: supermarket
           ports:
