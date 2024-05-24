@@ -16,6 +16,7 @@ WORKDIR /app
 COPY . .
 
 RUN cargo build --release 
+RUN ls -la
 
 FROM gcr.io/distroless/cc-debian11 AS runner
 # # set the working directory in the runner stage
