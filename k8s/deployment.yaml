@@ -21,9 +21,20 @@ spec:
         app: supermarket
     spec:
       containers:
-        - image: gcr.io/heymart-k8s/heymart-supermarket:87f6b4f64bc9fe18c4c1ea1ef543bd93d08196e3
+        - image: gcr.io/heymart-k8s/heymart-supermarket:29bcab8a03d30321a7a7510d7dd4aa25c057c455
           imagePullPolicy: IfNotPresent
           name: supermarket
           ports:
             - containerPort: 8080
           resources: {}
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  key: DATABASE_URL
+                  name: supermarket-secret
+            - name: AUTH_SERVICE_URL
+              valueFrom:
+                secretKeyRef:
+                  key: AUTH_SERVICE_URL
+                  name: supermarket-secret
