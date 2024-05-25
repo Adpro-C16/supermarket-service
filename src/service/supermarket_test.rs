@@ -257,4 +257,34 @@ mod tests {
             .unwrap();
         assert_eq!(supermarket.name, "Supermarket 1");
     }
+
+    #[sqlx::test]
+    async fn test_failed_create_supermarket() {
+        let pool = setup().await;
+        let result = SupermarketService::create(
+            pool.clone(),
+            CreateSupermarketDto {
+                name: "".to_string(),
+                manager_id: -1,
+            },
+        )
+        .await;
+        assert!(result.is_err());
+    }
+
+    #[sqlx::test]
+    async fn test_failed_update_supermarket() {
+        let pool = setup().await;
+        let result = SupermarketService::update(
+            pool.clone(),
+            1,
+            UpdateSupermarketDto {
+                name: Some("".to_string()),
+                balance: Some(-1),
+                manager_id: Some(-1),
+            },
+        )
+        .await;
+        assert!(result.is_err());
+    }
 }
