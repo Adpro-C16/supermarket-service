@@ -26,7 +26,6 @@ tonic = { version = "^0.7", features = [
 ] }
 prost = "0.10"
 tokio-stream = "0.1"
-sqlx-db-tester = "0.4.2"
 
 [build-dependencies]
 tonic-build = "0.7"
