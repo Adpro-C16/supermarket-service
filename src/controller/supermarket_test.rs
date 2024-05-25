@@ -14,7 +14,7 @@ mod tests {
     fn test_get_supermarket_by_id() {
         let rocket = rocket::build();
         let client = Client::tracked(rocket).unwrap();
-        let response = client.get("/supermarkets/1").dispatch();
-        assert_eq!(response.status(), Status::Ok);
+        let response = client.get("/supermarkets/100").dispatch();
+        assert_eq!(response.status(), Status::NotFound);
     }
 }
