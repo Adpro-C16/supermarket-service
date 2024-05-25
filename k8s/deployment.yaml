@@ -21,7 +21,7 @@ spec:
         app: supermarket
     spec:
       containers:
-        - image: gcr.io/heymart-k8s/heymart-supermarket:29bcab8a03d30321a7a7510d7dd4aa25c057c455
+        - image: gcr.io/heymart-k8s/heymart-supermarket:latest
           imagePullPolicy: IfNotPresent
           name: supermarket
           ports:
