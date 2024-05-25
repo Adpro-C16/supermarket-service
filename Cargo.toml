@@ -18,6 +18,7 @@ lazy_static = "1.4.0"
 getset = "0.1.2"
 dotenvy = "0.15.7"
 rocket_cors = "0.6.0"
+autometrics = { version = "1.0.1", features = ["prometheus-exporter"] }
 tonic = { version = "^0.7", features = [
     "transport",
     "tls",
@@ -32,4 +33,3 @@ tonic-build = "0.7"
 
 [profile.release]
 debug = 1
-

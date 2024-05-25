@@ -5,11 +5,13 @@ use crate::{
     library::error_response::error_response,
 };
 use crate::{library::heymart_result::Result, model::supermarket::Supermarket};
+use autometrics::autometrics;
 use rocket::{get, http::Status, post, put, State};
 use rocket::{response::status::Created, serde::json::Json};
 use sqlx::PgPool;
 
 #[get("/")]
+#[autometrics]
 pub async fn find_all(db_pool: &State<PgPool>) -> Result<Json<Vec<Supermarket>>> {
     return match SupermarketService::get_all_supermarkets(db_pool.inner().clone()).await {
         Ok(supermarkets) => Ok(Json::from(supermarkets)),
@@ -18,6 +20,7 @@ pub async fn find_all(db_pool: &State<PgPool>) -> Result<Json<Vec<Supermarket>>>
 }
 
 #[get("/<id>")]
+#[autometrics]
 pub async fn find_by_id(db_pool: &State<PgPool>, id: i64) -> Result<Json<Supermarket>> {
     return match SupermarketService::find_by_id(db_pool.inner().clone(), id).await {
         Ok(supermarket) => Ok(Json::from(supermarket)),
@@ -26,6 +29,7 @@ pub async fn find_by_id(db_pool: &State<PgPool>, id: i64) -> Result<Json<Superma
 }
 
 #[post("/", format = "json", data = "<supermarket>")]
+#[autometrics]
 pub async fn create(
     auth_ctx: AuthGuard,
     db_pool: &State<PgPool>,
@@ -45,6 +49,7 @@ pub async fn create(
 }
 
 #[put("/<id>", format = "json", data = "<supermarket>")]
+#[autometrics]
 pub async fn update(
     auth_ctx: AuthGuard,
     db_pool: &State<PgPool>,
@@ -66,6 +71,7 @@ pub async fn update(
 }
 
 #[delete("/<id>")]
+#[autometrics]
 pub async fn delete(auth_ctx: AuthGuard, db_pool: &State<PgPool>, id: i64) -> Result<()> {
     if auth_ctx.claims.role != Admin {
         return Err(error_response(

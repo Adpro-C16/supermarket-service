@@ -1,9 +1,12 @@
 name: Sonarcloud
 
 on:
-  workflow_dispatch:
-  schedule:
-    - cron: "0 0 * * *"
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
 
 env:
   CARGO_TERM_COLOR: always
@@ -13,16 +16,16 @@ jobs:
     name: SonarCloud and Linter
     runs-on: ubuntu-latest
     container:
-      image:                    xd009642/tarpaulin:develop-nightly
-      options:                  --security-opt seccomp=unconfined
+      image: xd009642/tarpaulin:develop-nightly
+      options: --security-opt seccomp=unconfined
     steps:
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
 
       - name: Install Rust
         run: rustup update stable
-      
+
       - name: Install Protobuf
         run: |
           apt-get update
@@ -36,9 +39,9 @@ jobs:
 
       - name: Install cargo-sonar and run Clippy
         run: |
-            cargo install cargo-sonar
-            cargo clippy --message-format json > my-clippy-report.json
-            cargo sonar --clippy --clippy-path my-clippy-report.json
+          cargo install cargo-sonar
+          cargo clippy --message-format json > my-clippy-report.json
+          cargo sonar --clippy --clippy-path my-clippy-report.json
 
       - name: Build with coverage
         run: |
@@ -52,7 +55,7 @@ jobs:
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}  # Needed to get PR information, if any
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }} # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
         with:
