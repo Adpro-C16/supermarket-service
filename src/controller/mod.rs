@@ -13,6 +13,7 @@ pub fn route_stage() -> AdHoc {
                 supermarket::create,
                 supermarket::update,
                 supermarket::delete,
+                supermarket::topup_supermarket_balance
             ],
         )
     });
