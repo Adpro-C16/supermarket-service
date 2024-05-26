@@ -6,6 +6,8 @@ use rocket::{
     Request,
 };
 
+use rocket::log;
+
 pub mod services {
     tonic::include_proto!("services");
 }
@@ -61,7 +63,7 @@ impl<'r> FromRequest<'r> for AuthGuard {
                 _ => Role::User,
             },
         };
-
+        log::info_!("Claims: {:?}", claims);
         Outcome::Success(AuthGuard { claims })
     }
 }

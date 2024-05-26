@@ -2,7 +2,7 @@ use crate::library::heymart_result::Result;
 use crate::{
     guard::auth_guard::AuthGuard,
     library::error_response::error_response,
-    repository::product::{CreateProductDto, Product, UpdateProductDto},
+    model::product::{CreateProductDto, Product, UpdateProductDto},
     service::product::ProductService,
 };
 use autometrics::autometrics;

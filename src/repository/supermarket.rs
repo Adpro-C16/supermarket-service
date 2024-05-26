@@ -120,6 +120,12 @@ impl SupermarketRepository {
             SELECT id, username, email
             FROM users
             WHERE NOT role = 'Admin'
+            AND NOT EXISTS (
+                SELECT 1
+                FROM supermarket
+                WHERE manager_id = users.id
+                LIMIT 1
+            )
             "#,
         )
         .fetch_all(&db_pool)
