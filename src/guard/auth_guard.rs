@@ -56,8 +56,8 @@ impl<'r> FromRequest<'r> for AuthGuard {
         let claims = Claims {
             user_id: response.user_id,
             role: match response.role.as_str() {
-                "ADMIN" => Role::Admin,
-                "USER" => Role::User,
+                "Admin" => Role::Admin,
+                "User" => Role::User,
                 _ => Role::User,
             },
         };
