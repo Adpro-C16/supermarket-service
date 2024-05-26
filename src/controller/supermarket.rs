@@ -6,6 +6,7 @@ use crate::{
 };
 use crate::{library::heymart_result::Result, model::supermarket::Supermarket};
 use autometrics::autometrics;
+use rocket::serde::{Deserialize, Serialize};
 use rocket::{get, http::Status, post, put, State};
 use rocket::{response::status::Created, serde::json::Json};
 use sqlx::PgPool;
@@ -64,6 +65,41 @@ pub async fn update(
     }
     return match SupermarketService::update(db_pool.inner().clone(), id, supermarket.into_inner())
         .await
+    {
+        Ok(supermarket) => Ok(Json::from(supermarket)),
+        Err(e) => Err(e),
+    };
+}
+
+#[derive(Serialize, Deserialize)]
+#[serde(crate = "rocket::serde")]
+struct TopUpSupermarketDto {
+    amount: i32,
+}
+
+#[put("/topup/<id>", format = "json", data = "<topup>")]
+#[autometrics]
+pub async fn topup_supermarket_balance(
+    db_pool: &State<PgPool>,
+    id: i64,
+    topup: Json<TopUpSupermarketDto>,
+) -> Result<Json<Supermarket>> {
+    let supermarket = SupermarketService::find_by_id(db_pool.inner().clone(), id).await;
+    if supermarket.is_err() {
+        return Err(error_response(Status::NotFound, "Supermarket not found"));
+    }
+    let mut supermarket = supermarket.unwrap();
+    supermarket.balance += topup.amount;
+    return match SupermarketService::update(
+        db_pool.inner().clone(),
+        id,
+        UpdateSupermarketDto {
+            balance: Some(supermarket.balance),
+            manager_id: None,
+            name: None,
+        },
+    )
+    .await
     {
         Ok(supermarket) => Ok(Json::from(supermarket)),
         Err(e) => Err(e),
