@@ -77,7 +77,7 @@ struct TopUpSupermarketDto {
     amount: i32,
 }
 
-#[put("/topup/<id>", format = "json", data = "<topup>")]
+#[post("/topup/<id>", format = "json", data = "<topup>")]
 #[autometrics]
 pub async fn topup_supermarket_balance(
     db_pool: &State<PgPool>,
