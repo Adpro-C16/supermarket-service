@@ -91,14 +91,12 @@ impl ProductRepository {
             r#"
             UPDATE product
             SET product_name = COALESCE(product_name, $1),
-                product_price = COALESCE(product_price, $2),
-                supermarket_id = COALESCE(supermarket_id, $3)
-            WHERE product_id = $4
+                product_price = COALESCE(product_price, $2)
+            WHERE product_id = $3
             RETURNING product_id, product_name, product_price, supermarket_id
             "#,
-            product.name,
-            product.balance,
-            product.manager_id,
+            product.product_name,
+            product.product_price,
             id
         )
         .fetch_one(&db_pool)
