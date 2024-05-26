@@ -1,7 +1,7 @@
 use crate::{
     library::{error_response::error_response, heymart_result::Result},
     model::supermarket::{CreateSupermarketDto, Supermarket, UpdateSupermarketDto},
-    repository::supermarket::SupermarketRepository,
+    repository::supermarket::{SupermarketRepository, UserData},
 };
 use rocket::http::Status;
 use sqlx::PgPool;
@@ -96,6 +96,16 @@ impl SupermarketService {
                 )),
             },
             None => Err(error_response(Status::NotFound, "Supermarket not found")),
+        }
+    }
+
+    pub async fn get_all_users(db_pool: PgPool) -> Result<Vec<UserData>> {
+        match SupermarketRepository::list_all_users(db_pool).await {
+            Some(users) => Ok(users),
+            None => Err(error_response(
+                Status::InternalServerError,
+                "Failed to get all users in supermarket",
+            )),
         }
     }
 }

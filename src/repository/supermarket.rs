@@ -1,5 +1,14 @@
 use crate::model::supermarket::{CreateSupermarketDto, Supermarket, UpdateSupermarketDto};
+use rocket::serde::{Deserialize, Serialize};
 use sqlx::PgPool;
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(crate = "rocket::serde")]
+pub struct UserData {
+    pub id: i64,
+    pub username: String,
+    pub email: String,
+}
 
 pub struct SupermarketRepository {}
 
@@ -100,6 +109,24 @@ impl SupermarketRepository {
 
         match query {
             Ok(supermarket) => Some(supermarket),
+            Err(_) => None,
+        }
+    }
+
+    pub async fn list_all_users(db_pool: PgPool) -> Option<Vec<UserData>> {
+        let query = sqlx::query_as!(
+            UserData,
+            r#"
+            SELECT id, username, email
+            FROM users
+            WHERE NOT role = 'Admin'
+            "#,
+        )
+        .fetch_all(&db_pool)
+        .await;
+
+        match query {
+            Ok(users) => Some(users),
             Err(_) => None,
         }
     }

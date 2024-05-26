@@ -1,4 +1,5 @@
 use crate::model::supermarket::{CreateSupermarketDto, UpdateSupermarketDto};
+use crate::repository::supermarket::UserData;
 use crate::service::supermarket::SupermarketService;
 use crate::{
     guard::auth_guard::{AuthGuard, Role::Admin},
@@ -117,6 +118,24 @@ pub async fn delete(auth_ctx: AuthGuard, db_pool: &State<PgPool>, id: i64) -> Re
     }
     return match SupermarketService::delete(db_pool.inner().clone(), id).await {
         Ok(_) => Ok(()),
+        Err(e) => Err(e),
+    };
+}
+
+#[get("/users")]
+#[autometrics]
+pub async fn list_all_users(
+    auth_ctx: AuthGuard,
+    db_pool: &State<PgPool>,
+) -> Result<Json<Vec<UserData>>> {
+    if auth_ctx.claims.role != Admin {
+        return Err(error_response(
+            Status::Forbidden,
+            "You are not authorized to perform this action.",
+        ));
+    }
+    return match SupermarketService::get_all_users(db_pool.inner().clone()).await {
+        Ok(users) => Ok(Json(users)),
         Err(e) => Err(e),
     };
 }
