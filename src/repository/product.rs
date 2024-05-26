@@ -1,5 +1,4 @@
 use crate::model::product::{CreateProductDto, Product, UpdateProductDto};
-use rocket::serde::{Deserialize, Serialize};
 use sqlx::PgPool;
 
 pub struct ProductRepository {}
