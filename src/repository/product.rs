@@ -21,9 +21,8 @@ pub struct CreateProductDto {
 #[derive(Serialize, Deserialize)]
 #[serde(crate = "rocket::serde")]
 pub struct UpdateProductDto {
-    pub name: Option<String>,
-    pub balance: Option<i32>,
-    pub manager_id: Option<i32>,
+    pub product_name: Option<String>,
+    pub product_price: Option<i32>,
 }
 
 pub struct ProductRepository {}
@@ -86,11 +85,7 @@ impl ProductRepository {
         }
     }
 
-    pub async fn update(
-        db_pool: PgPool,
-        id: i32,
-        product: UpdateProductDto,
-    ) -> Option<Product> {
+    pub async fn update(db_pool: PgPool, id: i32, product: UpdateProductDto) -> Option<Product> {
         let query = sqlx::query_as!(
             Product,
             r#"
