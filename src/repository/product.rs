@@ -67,8 +67,8 @@ impl ProductRepository {
             Product,
             r#"
             UPDATE product
-            SET product_name = COALESCE(product_name, $1),
-                product_price = COALESCE(product_price, $2)
+            SET product_name = COALESCE($1, product_name),
+                product_price = COALESCE($2, product_price)
             WHERE product_id = $3
             RETURNING product_id, product_name, product_price, supermarket_id
             "#,
