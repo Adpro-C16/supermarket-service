@@ -1,0 +1,38 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            SElECT product_id, product_name, product_price, supermarket_id\n            FROM product\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "product_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "product_name",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 2,
+        "name": "product_price",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 3,
+        "name": "supermarket_id",
+        "type_info": "Int4"
+      }
+    ],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "8500e1b92a9f2a0a5cc1b3746f60494726b99f5fe83c65461e5edce7943f2fe8"
+}

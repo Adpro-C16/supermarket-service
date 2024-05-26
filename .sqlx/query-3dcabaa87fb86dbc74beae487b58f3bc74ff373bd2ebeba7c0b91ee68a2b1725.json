@@ -1,0 +1,42 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            INSERT INTO product (product_name, product_price, supermarket_id)\n            VALUES ($1, $2, $3)\n            RETURNING product_id, product_name, product_price, supermarket_id\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "product_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "product_name",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 2,
+        "name": "product_price",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 3,
+        "name": "supermarket_id",
+        "type_info": "Int4"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Varchar",
+        "Int4",
+        "Int4"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "3dcabaa87fb86dbc74beae487b58f3bc74ff373bd2ebeba7c0b91ee68a2b1725"
+}

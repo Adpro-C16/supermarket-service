@@ -1,0 +1,40 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            DELETE FROM product\n            WHERE product_id = $1\n            RETURNING product_id, product_name, product_price, supermarket_id\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "product_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "product_name",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 2,
+        "name": "product_price",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 3,
+        "name": "supermarket_id",
+        "type_info": "Int4"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int4"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "3892bafaec11cee5fe91c0fd88b6c8f21b9ee144e04af2f45372f2d925945b05"
+}

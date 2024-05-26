@@ -1,0 +1,43 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            UPDATE product\n            SET product_name = COALESCE(product_name, $1),\n                product_price = COALESCE(product_price, $2),\n                supermarket_id = COALESCE(supermarket_id, $3)\n            WHERE product_id = $4\n            RETURNING product_id, product_name, product_price, supermarket_id\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "product_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "product_name",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 2,
+        "name": "product_price",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 3,
+        "name": "supermarket_id",
+        "type_info": "Int4"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Varchar",
+        "Int4",
+        "Int4",
+        "Int4"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "a69961e846ce79105af63e29920b804060a4e79c528f16b6fc975c8f46ae764d"
+}
