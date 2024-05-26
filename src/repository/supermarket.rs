@@ -130,4 +130,23 @@ impl SupermarketRepository {
             Err(_) => None,
         }
     }
+
+    pub async fn find_by_manager_id(db_pool: PgPool, manager_id: i32) -> Option<Vec<Supermarket>> {
+        let query = sqlx::query_as!(
+            Supermarket,
+            r#"
+            SELECT id, name, balance, manager_id, created_at::text
+            FROM supermarket
+            WHERE manager_id = $1
+            "#,
+            manager_id
+        )
+        .fetch_all(&db_pool)
+        .await;
+
+        match query {
+            Ok(supermarket) => Some(supermarket),
+            Err(_) => None,
+        }
+    }
 }

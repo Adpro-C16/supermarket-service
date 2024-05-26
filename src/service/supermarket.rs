@@ -108,4 +108,11 @@ impl SupermarketService {
             )),
         }
     }
+
+    pub async fn find_by_manager_id(db_pool: PgPool, manager_id: i32) -> Result<Vec<Supermarket>> {
+        match SupermarketRepository::find_by_manager_id(db_pool, manager_id).await {
+            Some(supermarket) => Ok(supermarket),
+            None => Err(error_response(Status::NotFound, "Supermarket not found")),
+        }
+    }
 }

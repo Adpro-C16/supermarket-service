@@ -139,3 +139,15 @@ pub async fn list_all_users(
         Err(e) => Err(e),
     };
 }
+
+#[get("/manager/<manager_id>")]
+#[autometrics]
+pub async fn find_by_manager_id(
+    db_pool: &State<PgPool>,
+    manager_id: i32,
+) -> Result<Json<Vec<Supermarket>>> {
+    return match SupermarketService::find_by_manager_id(db_pool.inner().clone(), manager_id).await {
+        Ok(supermarkets) => Ok(Json::from(supermarkets)),
+        Err(e) => Err(e),
+    };
+}
